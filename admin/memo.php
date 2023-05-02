@@ -97,7 +97,12 @@ include "../dbcon.php";
                                   $imgContent = addslashes(file_get_contents($image));
 
                                   $insert = $conn->query("INSERT into `memos` (memo_title, signatories, user_id,`image`) VALUES ('" . $_POST['memo_name'] . "', '" . $_POST['signatories'] . "', '" . $_POST['fwdsignatory'] . "','$imgContent')");
-                                  if ($insert) {
+                                  $getid = mysqli_query($conn, "SELECT id FROM `memos` ORDER BY id DESC LIMIT 1;");
+                                  $idrow = mysqli_fetch_array($getid);
+                                  $id = $idrow['id'];
+                                  
+                                  $insert2 = $conn->query("INSERT into forwarding_tracking (memo_id, forwarded_to) VALUES ('$id','" . $_POST['fwdsignatory'] . "');");
+                                  if ($insert2) {
                                     echo "<script>window.location.href='memo.php'</script>";
                                     echo "<script>alert('Memo Added Successfully!')</script>";
                                   } else {
@@ -133,7 +138,7 @@ include "../dbcon.php";
                   </thead>
                   <tbody style="cursor: pointer" id="myBtn">
                     <?php
-                    $sql = "SELECT id,memo_title, DATE(date_created) as date_created, signatories, is_signed, user_id, memo_category FROM `memos`;";
+                    $sql = "SELECT id,memo_title, DATE(date_created) as date_created, signatories, is_signed, user_id FROM `memos`;";
                     $actresult = mysqli_query($conn, $sql);
 
                     while ($result = mysqli_fetch_assoc($actresult)) {
@@ -143,7 +148,7 @@ include "../dbcon.php";
                                   <?php echo $result['memo_title']; ?>
                                 </td>
                                 <!-- <td>
-                                  <?php echo $result['memo_category']; ?>
+                                  <?php #echo $result['memo_category']; ?>
                                 </td> -->
                                 <td>
                                   <?php echo $result['date_created']; ?>
@@ -159,7 +164,7 @@ include "../dbcon.php";
                                 </td>
                                 <td>
                                   <div class="d-grid gap-2 d-md-flex">
-                                  <a href="./forCreateMemo.php"<?php echo $result['id']; ?> class="btn btn-primary btn-sm me-md-2"><span
+                                  <a href="./forCreateMemo.php?id=<?php echo $result['id']; ?>" class="btn btn-primary btn-sm me-md-2"><span
                                   class="me-2"><i class="bi bi-folder2-open"></i></span> View Memo</a> ||
                                     <a href="#del<?php echo $result['id']; ?>" data-toggle="modal" class="btn btn-danger btn-sm"><span
                                         class="me-2"><i class="bi bi-trash"></i></span> Delete

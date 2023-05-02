@@ -11,14 +11,13 @@ include "../dbcon.php";
   <title>For signature</title>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
 
-<script src=
-"https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js">
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js">
   </script>
 
   <!-- Interact.js library -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js"></script>
 
   <style>
     /* Style for the canvas */
@@ -35,7 +34,6 @@ include "../dbcon.php";
       width: 200px;
       height: 200px;
       cursor: move;
-      hover: border: 1px solid #ccc;
     }
   </style>
 </head>
@@ -51,17 +49,25 @@ include "../dbcon.php";
   <main class="mt-5 pt-3 px-4">
     <div class="container-fluid">
       <!-- Button to open the modal -->
-         <div class="row">
-                    <div class="col">
-                        <h1 class="mt-4 mb-3 text-left fw-bold">Memorandum</h1>
-                    </div>
-                    <div class="col">
-                        <!-- <Button class="btn btn-success mt-4">Mark as Recieved</Button> -->
-                    </div>
-                </div>
-        <div id="saveMemo">
-            <img src="./images/memo-template.jpg" alt="memorandum"/>
+      <div class="row">
+        <div class="col">
+          <h1 class="mt-4 mb-3 text-left fw-bold">Memorandum</h1>
         </div>
+        <div class="col">
+          <!-- <Button class="btn btn-success mt-4">Mark as Recieved</Button> -->
+        </div>
+      </div>
+      <div id="saveMemo">
+        <?php
+        $id = $_GET['id'];
+        $edit = mysqli_query($conn, "select * from memos where id='" . $id . "'");
+        $erow = mysqli_fetch_array($edit);
+        echo '<div>
+     <img src="data:image/jpeg;base64,' . base64_encode($erow['image']) . '" id="memoImage" class="img-fluid" />';
+        echo "</div>";
+        ?>
+        <!-- <img src="./images/memo-template.jpg" alt="memorandum"/> -->
+      </div>
     </div>
   </main>
 
@@ -109,96 +115,104 @@ include "../dbcon.php";
       ctx.stroke();
       ctx.beginPath();
       ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
-}
-  // Save the image as a PNG file
-  function saveImage() {
-    var dataURL = canvas.toDataURL("image/png");
-    document.getElementById("saved-image").src = dataURL;
-  }
-
-  // Add event listeners to the canvas
-  canvas.addEventListener("mousedown", startPosition);
-  canvas.addEventListener("mouseup", finishedPosition);
-  canvas.addEventListener("mousemove", draw);
-
-  // Make the saved image draggable
-  dragElement(document.getElementById("saved-image"));
-
-  // Function to make an element draggable
-  function dragElement(element) {
-    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-    element.onmousedown = dragMouseDown;
-
-    function dragMouseDown(e) {
-      e = e || window.event;
-      e.preventDefault();
-      pos3 = e.clientX;
-      pos4 = e.clientY;
-      document.onmouseup = closeDragElement;
-      document.onmousemove = elementDrag;
+    }
+    // Save the image as a PNG file
+    function saveImage() {
+      var dataURL = canvas.toDataURL("image/png");
+      document.getElementById("saved-image").src = dataURL;
     }
 
-    function elementDrag(e) {
-      e = e || window.event;
-      e.preventDefault();
-      pos1 = pos3 - e.clientX;
-      pos2 = pos4 - e.clientY;
-      pos3 = e.clientX;
-      pos4 = e.clientY;
-      element.style.top = (element.offsetTop - pos2) + "px";
-      element.style.left = (element.offsetLeft - pos1) + "px";
+    // Add event listeners to the canvas
+    canvas.addEventListener("mousedown", startPosition);
+    canvas.addEventListener("mouseup", finishedPosition);
+    canvas.addEventListener("mousemove", draw);
+
+    // Make the saved image draggable
+    dragElement(document.getElementById("saved-image"));
+
+    // Function to make an element draggable
+    function dragElement(element) {
+      var pos1 = 0,
+        pos2 = 0,
+        pos3 = 0,
+        pos4 = 0;
+      element.onmousedown = dragMouseDown;
+
+      function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+      }
+
+      function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        element.style.top = (element.offsetTop - pos2) + "px";
+        element.style.left = (element.offsetLeft - pos1) + "px";
+      }
+
+      function closeDragElement() {
+        document.onmouseup = null;
+        document.onmousemove = null;
+      }
     }
+    // Make the saved image resizable
+    interact('#saved-image')
+      .resizable({
+        edges: {
+          left: true,
+          right: true,
+          bottom: true,
+          top: true
+        }
+      })
+      .on('resizemove', function(event) {
+        var target = event.target;
+        var x = (parseFloat(target.getAttribute('data-x')) || 0);
+        var y = (parseFloat(target.getAttribute('data-y')) || 0);
 
-    function closeDragElement() {
-      document.onmouseup = null;
-      document.onmousemove = null;
-    }
-  }
-  // Make the saved image resizable
-interact('#saved-image')
-	.resizable({
-		edges: { left: true, right: true, bottom: true, top: true }
-	})
-	.on('resizemove', function (event) {
-		var target = event.target;
-		var x = (parseFloat(target.getAttribute('data-x')) || 0);
-		var y = (parseFloat(target.getAttribute('data-y')) || 0);
+        // update the element's style
+        target.style.width = event.rect.width + 'px';
+        target.style.height = event.rect.height + 'px';
 
-		// update the element's style
-		target.style.width = event.rect.width + 'px';
-		target.style.height = event.rect.height + 'px';
+        // translate when resizing from top or left edges
+        x += event.deltaRect.left;
+        y += event.deltaRect.top;
 
-		// translate when resizing from top or left edges
-		x += event.deltaRect.left;
-		y += event.deltaRect.top;
+        target.style.webkitTransform = target.style.transform =
+          'translate(' + x + 'px,' + y + 'px)';
 
-		target.style.webkitTransform = target.style.transform =
-			'translate(' + x + 'px,' + y + 'px)';
-
-		target.setAttribute('data-x', x);
-		target.setAttribute('data-y', y);
-	});
+        target.setAttribute('data-x', x);
+        target.setAttribute('data-y', y);
+      });
 
     // convert signed memo as image
-  
-  // Define the function 
-  // to screenshot the div
-  function downloadMemo() {
+
+    // Define the function 
+    // to screenshot the div
+    function downloadMemo() {
       let div =
-          document.getElementById('saveMemo');
+        document.getElementById('saveMemo');
 
       // Use the html2canvas
       // function to take a screenshot
       // and append it
       // to the output div
       html2canvas(div).then(
-          function (canvas) {
-              document
-              .getElementById('output')
-              .appendChild(canvas);
-          })
-  }
-</script>
+        function(canvas) {
+          document
+            .getElementById('output')
+            .appendChild(canvas);
+        })
+    }
+  </script>
 
 
 
@@ -326,7 +340,7 @@ images.forEach(image => {
 
   </script> -->
 
-          
+
 
 </body>
 
