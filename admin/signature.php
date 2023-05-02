@@ -73,7 +73,7 @@ include "../dbcon.php";
           </div>
         </div>
       </div>
-      <div id="saveMemo">
+      <div id="saveMemo" style="background-color: transparent">
         <?php
         $id = $_GET['id'];
         $edit = mysqli_query($conn, "select * from memos where id='" . $id. "'");
