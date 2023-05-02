@@ -143,19 +143,19 @@ include "../dbcon.php";
                         $image = $_FILES['image']['tmp_name'];
                         $imgContent = addslashes(file_get_contents($image));
 
-                        $insert = $conn->query("INSERT into `memos` (memo_title, signatories,`image`) VALUES ('" . $_POST['memo_name'] . "', '" . $_POST['signatories'] . "','$imgContent')");
+                        $insert = $conn->query("UPDATE memos SET `image` ='$imgContent' WHERE id = ".$_GET['id']."");
                         if ($insert) {
-                          echo "<script>window.location.href='memo.php'</script>";
+                          echo "<script>window.location.href='forSignature.php'</script>";
                         } else {
                           echo "<script>
                                         alert('Failed');
-                                        window.location.href='memo.php';
+                                        window.location.href='signature.php';
                                         </script>";
                         }
                       }
                     } else {
                       echo '<script>alert("No image data!") 
-                                window.location.href="memo.php"</script>';
+                                window.location.href="signature.php"</script>';
                     }
                   }
                   ?>
