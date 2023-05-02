@@ -111,16 +111,15 @@ include "../dbcon.php";
                   <thead>
                     <tr>
                       <th>Memorandum Title</th>
-                      <th>Signatories</th>
                       <th>Signed?</th>
+                      <th>Date Signed</th>
                       <th>Forwarded To</th>
-                      <th>Date Created</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody style="cursor: pointer" id="myBtn">
                     <?php
-                    $sql = "SELECT id,memo_title, DATE(date_created) as date_created, signatories, is_signed, forwarded_to FROM `memos`;";
+                    $sql = "SELECT id,memo_title, DATE(date_created) as date_created, signatories, is_signed, user_id FROM `memos`;";
                     $actresult = mysqli_query($conn, $sql);
 
                     while ($result = mysqli_fetch_assoc($actresult)) {
@@ -130,19 +129,17 @@ include "../dbcon.php";
                             <?php echo $result['memo_title']; ?>
                           </td>
                           <td>
-                            <?php echo $result['signatories']; ?>
-                          <td>
                             <?php echo $result['is_signed']; ?>
-                          </td>
-                          <td>
-                            <?php echo $result['forwarded_to']; ?>
                           </td>
                           <td>
                             <?php echo $result['date_created']; ?>
                           </td>
                           <td>
+                            <?php echo $result['user_id']; ?>
+                          </td>
+                          <td>
                             <div class="d-grid gap-2 d-md-flex">
-                            <a href="./signature.php"<?php echo $result['id']; ?> class="btn btn-primary btn-sm me-md-2"><span
+                            <a href="./memorandum.php"<?php echo $result['id']; ?> class="btn btn-primary btn-sm me-md-2"><span
                                   class="me-2"><i class="bi bi-folder2-open"></i></span> View Memo</a>
                                 <!-- <a href="#fwd<?php echo $result['id']; ?>" data-toggle="modal" class="btn btn-success btn-sm"><span
                               class="me-2"><i class="bi bi-arrow-right"></i></span> Forward

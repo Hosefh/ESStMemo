@@ -65,6 +65,13 @@ include "../dbcon.php";
                                   </div>
                                 </div>
                                 <div class="col-md-12 mb-2">
+                                  <label for="validationCustom01">Forward to first signatory:</label>
+                                  <input type="number" class="form-control" id="" name="fwdsignatory" required>
+                                  <div class="valid-feedback">
+                                    Looks good!
+                                  </div>
+                                </div>
+                                <div class="col-md-12 mb-2">
                                   <label for="validationCustom01">Select a file:</label>
                                   <input type="file" class="form-control" id="" name="image" value="" accept=".jpg,.jpeg,.png" required>
                                   <div class="valid-feedback">
@@ -89,9 +96,10 @@ include "../dbcon.php";
                                   $image = $_FILES['image']['tmp_name'];
                                   $imgContent = addslashes(file_get_contents($image));
 
-                                  $insert = $conn->query("INSERT into `memos` (memo_title, signatories,`image`) VALUES ('" . $_POST['memo_name'] . "', '" . $_POST['signatories'] . "','$imgContent')");
+                                  $insert = $conn->query("INSERT into `memos` (memo_title, signatories, user_id,`image`) VALUES ('" . $_POST['memo_name'] . "', '" . $_POST['signatories'] . "', '" . $_POST['fwdsignatory'] . "','$imgContent')");
                                   if ($insert) {
                                     echo "<script>window.location.href='memo.php'</script>";
+                                    echo "<script>alert('Memo Added Successfully!')</script>";
                                   } else {
                                     echo "<script>
                                         alert('Failed');
@@ -115,16 +123,17 @@ include "../dbcon.php";
                   <thead>
                     <tr>
                       <th>Memorandum Title</th>
+                      <!-- <th>Category</th> -->
                       <th>Date Created</th>
                       <th>Signatories</th>
-                      <th>Signatories Sent</th>
+                      <th>Curr. Signatory</th>
                       <th>Signed?</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody style="cursor: pointer" id="myBtn">
                     <?php
-                    $sql = "SELECT id,memo_title, DATE(date_created) as date_created, signatories, is_signed, forwarded_to FROM `memos`;";
+                    $sql = "SELECT id,memo_title, DATE(date_created) as date_created, signatories, is_signed, user_id, memo_category FROM `memos`;";
                     $actresult = mysqli_query($conn, $sql);
 
                     while ($result = mysqli_fetch_assoc($actresult)) {
@@ -133,6 +142,9 @@ include "../dbcon.php";
                                 <td>
                                   <?php echo $result['memo_title']; ?>
                                 </td>
+                                <!-- <td>
+                                  <?php echo $result['memo_category']; ?>
+                                </td> -->
                                 <td>
                                   <?php echo $result['date_created']; ?>
                                 </td>
@@ -140,7 +152,7 @@ include "../dbcon.php";
                                   <?php echo $result['signatories']; ?>
                                 </td>
                                 <td>
-                                  <?php echo $result['forwarded_to']; ?>
+                                  <?php echo $result['user_id']; ?>
                                 </td>
                                 <td>
                                   <?php echo $result['is_signed']; ?>
@@ -161,15 +173,14 @@ include "../dbcon.php";
                               <div class="modal fade" id="edit<?php echo $result['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="memoModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                           <div class="modal-content">
-                            <!-- Modal Header -->
+                          <form id="update_form" method="POST">
                             <div class="modal-header">
                                 <h4 class="modal-title">Memorandum</h4>
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                             </div>
                               <!-- Modal Body with Image -->
                             <div class="modal-body" >
-                              <p>Image Preview</P>
-                                <!-- <img src="https://templatearchive.com/wp-content/uploads/2017/08/memo-template-01.jpg" class="img-fluid" alt="Modal Image" id="imageModal"> -->
+                              <p>Image Preview</p>
                                 <?php
                                 $id = $result['id'];
                                 $edit = mysqli_query($conn, "select * from memos where id='" . $result['id'] . "'");
@@ -180,27 +191,19 @@ include "../dbcon.php";
                                 ?>
                                             <!-- <h6>Create Signature</h6>
                                   <canvas id="signatureCanvas" width="300" height="150" style="border: 1px ridge #000;"></canvas> -->
-                                          <form class="needs-validation" method="POST" enctype="multipart/form-data">
+                                          
                                             <div class="form-row pt-2">
                                               <div class="col-md-12 mb-2">
-                                              <input type="hidden" id="id_u" name="editid" value="<?php echo $result['id']; ?>" class="form-control" required>
+                                              <input type="hidden" id="id_m" name="editid" value="<?php echo $result['id']; ?>" class="form-control" required>
                                               <div class="col-md-12 mb-2">
                                                 <label for="validationCustom01">Memo Title:</label>
-                                                <input type="text" class="form-control" id="title_m" name="memo_name" value="<?php echo $result['memo_title']; ?>" readonly required>
+                                                <input type="text" class="form-control" id="memo_name_m" name="memo_name" value="<?php echo $result['memo_title']; ?>"  disabled>
                                                 <div class="valid-feedback">
                                                   Looks good!
                                                 </div>
                                               </div>
                                                 <label for="validationCustom01">Forward To Signatory:</label>
-                                                <input type="number" class="form-control" id="" name="user_id" required>
-                                                <div class="valid-feedback">
-                                                  Looks good!
-                                                </div>
-                                              </div>
-                                              <div class="col-md-12 mb-2">
-                                                <label for="validationCustom01">Select a file:</label>
-                                                <input type="file" class="form-control" id="" name="image" accept=".jpg,.jpeg,.png" required>
-                                                <img src="data:image/jpeg;base64,'.base64_encode($erow['image'] ).'" id="memoImage" class="img-fluid" />
+                                                <input type="number" class="form-control" id="user_m" name="user" required>
                                                 <div class="valid-feedback">
                                                   Looks good!
                                                 </div>
@@ -211,132 +214,29 @@ include "../dbcon.php";
                                             <!-- Modal Footer -->
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-primary">Forward to Signatory</button>
+                                                <button type="button" class="btn btn-primary" id="update">Forward to Signatory</button>
                                             </div>
                                           </form>
                                           <?php
-                                          if (isset($_POST['memo_name'])) {
-                                            if (!empty($_FILES["image"]["name"])) {
-                                              $fileName = basename($_FILES["image"]["name"]);
-                                              $fileType = pathinfo($fileName, PATHINFO_EXTENSION);
-
-                                              // Allow certain file formats 
-                                              $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
-                                              if (in_array($fileType, $allowTypes)) {
-                                                $image = $_FILES['image']['tmp_name'];
-                                                $imgContent = addslashes(file_get_contents($image));
-
-                                                $insert = $conn->query("INSERT into `signatories` (memo_title, user_id,`image`) VALUES ('" . $_POST['memo_name'] . "', '" . $_POST['user_id'] . "','$imgContent')");
-                                                if ($insert) {
-                                                  echo "<script>window.location.href='memo.php'</script>";
-                                                } else {
-                                                  echo "<script>
-                                        alert('Failed');
-                                        window.location.href='memo.php';
-                                        </script>";
-                                                }
-                                              }
+                                          if (isset($_POST['user']))
+                                          {
+                                            $sql = "UPDATE `memos` SET forwarded_to = '" . $_POST['user'] . "'
+                                            WHERE id='" . $_POST['editid'] . "';";
+                                            if ($conn->query($sql) === TRUE) {
+                                              echo '<script>alert("Memo Forwarded Successfully!") 
+                                                      window.location.href="memo.php"</script>';
                                             } else {
-                                              echo '<script>alert("No image data!") 
-                                window.location.href="memo.php"</script>';
+                                              echo '<script>alert("Forwarding Failed!\n Please Check SQL Connection String!") 
+                                                      window.location.href="memo.php"</script>';
                                             }
                                           }
                                           ?>
+                                          
                             </div>
                           </div>
                         </div>
                       </div>
                               <!-- End of Edit Modal -->
-
-                             <!-- Edit Modal HTML -->
-                      <div id="edit<?php echo $result['id']; ?>" class="modal fade" data-bs-backdrop="static" tabindex="-1">
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">Memorandum</h4>
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            </div>
-                            <div class="modal-body" >
-                              <p>Image Preview</P>
-                                <!-- <img src="https://templatearchive.com/wp-content/uploads/2017/08/memo-template-01.jpg" class="img-fluid" alt="Modal Image" id="imageModal"> -->
-                                <?php
-                                $id = $result['id'];
-                                $edit = mysqli_query($conn, "select * from memos where id='" . $result['id'] . "'");
-                                $erow = mysqli_fetch_array($edit);
-                                echo '<div>
-                                    <img src="data:image/jpeg;base64,' . base64_encode($erow['image']) . '" id="memoImage" class="img-fluid" />';
-                                echo "</div>";
-                                ?>
-                                            <!-- <h6>Create Signature</h6>
-                                  <canvas id="signatureCanvas" width="300" height="150" style="border: 1px ridge #000;"></canvas> -->
-                                          <form class="needs-validation" method="POST" enctype="multipart/form-data">
-                                            <div class="form-row pt-2">
-                                              <div class="col-md-12 mb-2">
-                                              <input type="hidden" id="id_u" name="editid" value="<?php echo $result['id']; ?>" class="form-control" required>
-                                              <div class="col-md-12 mb-2">
-                                                <label for="validationCustom01">Memo Title:</label>
-                                                <input type="text" class="form-control" id="title_m" name="memo_name" value="<?php echo $result['memo_title']; ?>" readonly required>
-                                                <div class="valid-feedback">
-                                                  Looks good!
-                                                </div>
-                                              </div>
-                                                <label for="validationCustom01">Forward To Signatory:</label>
-                                                <input type="number" class="form-control" id="" name="user_id" required>
-                                                <div class="valid-feedback">
-                                                  Looks good!
-                                                </div>
-                                              </div>
-                                              <div class="col-md-12 mb-2">
-                                                <label for="validationCustom01">Select a file:</label>
-                                                <input type="file" class="form-control" id="" name="image" accept=".jpg,.jpeg,.png" required>
-                                                <img src="data:image/jpeg;base64,'.base64_encode($erow['image'] ).'" id="memoImage" class="img-fluid" />
-                                                <div class="valid-feedback">
-                                                  Looks good!
-                                                </div>
-                                              </div>
-                                            </div>
-                                            </div>
-
-                                            <!-- Modal Footer -->
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-primary">Forward to Signatory</button>
-                                            </div>
-                                          </form>
-                                          <?php
-                                          if (isset($_POST['memo_name'])) {
-                                            if (!empty($_FILES["image"]["name"])) {
-                                              $fileName = basename($_FILES["image"]["name"]);
-                                              $fileType = pathinfo($fileName, PATHINFO_EXTENSION);
-
-                                              // Allow certain file formats 
-                                              $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
-                                              if (in_array($fileType, $allowTypes)) {
-                                                $image = $_FILES['image']['tmp_name'];
-                                                $imgContent = addslashes(file_get_contents($image));
-
-                                                $insert = $conn->query("INSERT into `signatories` (memo_title, user_id,`image`) VALUES ('" . $_POST['memo_name'] . "', '" . $_POST['user_id'] . "','$imgContent')");
-                                                if ($insert) {
-                                                  echo "<script>window.location.href='memo.php'</script>";
-                                                } else {
-                                                  echo "<script>
-                                        alert('Failed');
-                                        window.location.href='memo.php';
-                                        </script>";
-                                                }
-                                              }
-                                            } else {
-                                              echo '<script>alert("No image data!") 
-                                window.location.href="memo.php"</script>';
-                                            }
-                                          }
-                                          ?>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    
-
 
                               <!-- Delete -->
                               <div class="modal fade" id="del<?php echo $result['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"

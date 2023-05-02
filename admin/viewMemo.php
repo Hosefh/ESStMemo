@@ -130,7 +130,7 @@ include "../dbcon.php";
                   </thead>
                   <tbody style="cursor: pointer" id="myBtn">
                     <?php
-                      $sql = "SELECT id,memo_title, DATE(date_created) as date_created, signatories, is_signed, forwarded_to FROM `memos`;";
+                      $sql = "SELECT id,memo_title, DATE(date_created) as date_created, signatories, is_signed, user_id FROM `memos`;";
                       $actresult = mysqli_query($conn, $sql);
 
                       while ($result = mysqli_fetch_assoc($actresult)) {

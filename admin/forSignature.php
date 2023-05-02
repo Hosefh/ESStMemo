@@ -8,6 +8,7 @@ include "../dbcon.php";
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" value="notranslate">
   <title>Memorandum Management</title>
 </head>
 
@@ -33,14 +34,13 @@ include "../dbcon.php";
                   <thead>
                     <tr>
                       <th>Memorandum Title</th>
-                      <th>Signatories</th>
                       <th>Date Recieved</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody style="cursor: pointer" id="myBtn">
                     <?php
-                      $sql = "SELECT id,memo_title, DATE(date_created) as date_created, signatories, is_signed, forwarded_to FROM `memos`;";
+                      $sql = "SELECT id,memo_title, DATE(date_created) as date_created, signatories, is_signed, user_id FROM `memos`;";
                       $actresult = mysqli_query($conn, $sql);
 
                       while ($result = mysqli_fetch_assoc($actresult)) {
@@ -48,9 +48,6 @@ include "../dbcon.php";
                     <tr>
                       <td>
                         <?php echo $result['memo_title']; ?>
-                      </td>
-                      <td>
-                        <?php echo $result['signatories']; ?>
                       </td>
                       <td>
                         <?php echo $result['date_created']; ?>
