@@ -25,7 +25,7 @@ include "../dbcon.php";
         <div class="col-md-12 mb-3">
           <div class="card">
             <div class="card-header">
-              <span><i class="bi bi-file-text-fill me-2"></i></span> Memorandums
+                <span><i class="bi bi-file-text-fill me-2"></i></span> Memorandums
             </div>
             <div class="card-body">
               <div class="table-responsive">
