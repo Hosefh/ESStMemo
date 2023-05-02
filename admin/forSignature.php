@@ -54,7 +54,7 @@ include "../dbcon.php";
                       </td>
                       <td>
                         <div class="d-grid gap-2 d-md-flex">
-                        <a href="./signature.php"<?php echo $result['id']; ?> class="btn btn-primary btn-sm me-md-2"><span
+                        <a href="./signature.php?id=<?php echo $result['id']; ?>" class="btn btn-primary btn-sm me-md-2"><span
                               class="me-2"><i class="bi bi-folder2-open"></i></span> View Memo</a>
                             <!-- <a href="#fwd<?php echo $result['id']; ?>" data-toggle="modal" class="btn btn-success btn-sm"><span
                               class="me-2"><i class="bi bi-arrow-right"></i></span> Forward

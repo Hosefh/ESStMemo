@@ -12,14 +12,13 @@ include "../dbcon.php";
   <title>For signature</title>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
 
-<script src=
-"https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js">
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js">
   </script>
 
   <!-- Interact.js library -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js"></script>
 
   <style>
     /* Style for the canvas */
@@ -36,7 +35,6 @@ include "../dbcon.php";
       width: 200px;
       height: 200px;
       cursor: move;
-      hover: border: 1px solid #ccc;
     }
   </style>
 </head>
@@ -53,115 +51,123 @@ include "../dbcon.php";
     <div class="container-fluid">
       <!-- Button to open the modal -->
       <h1 class="mt-4 mb-3 text-left fw-bold">To Sign Memorandum</h1>
-    <button type="button" class="btn btn-primary mt-4 mb-2" data-toggle="modal" data-target="#drawing-modal">Add Signature</button>
-    <button type="button" class="btn btn-success mt-4 mb-2" onclick="downloadMemo()" id="saveAsImage">Save Memo</button>
-        <!-- The modal -->
-        <div class="modal fade" id="drawing-modal" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="modal-label">Draw Signature</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <canvas id="canvas" width="730" height="400"></canvas>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="saveImage()" data-dismiss="modal" aria-label="Close">Save Image</button>
+      <button type="button" class="btn btn-primary mt-4 mb-2" data-toggle="modal" data-target="#drawing-modal">Add Signature</button>
+      <button type="button" class="btn btn-success mt-4 mb-2" onclick="downloadMemo()" id="saveAsImage">Save Memo</button>
+      <!-- The modal -->
+      <div class="modal fade" id="drawing-modal" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modal-label">Draw Signature</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <canvas id="canvas" width="730" height="400"></canvas>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" onclick="saveImage()" data-dismiss="modal" aria-label="Close">Save Image</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="saveMemo">
+        <?php
+        $id = $_GET['id'];
+        $edit = mysqli_query($conn, "select * from memos where id='" . $id. "'");
+        $erow = mysqli_fetch_array($edit);
+        echo '<div>
+     <img src="data:image/jpeg;base64,' . base64_encode($erow['image']) . '" id="memoImage" class="img-fluid" />';
+        echo "</div>";
+        ?>
+        <!-- <img src="./images/memo-template.jpg" alt="memorandum"/> -->
+
+
+        <!-- The saved image -->
+        <img id="saved-image" src="" draggable="true">
+      </div>
+      <div class="row">
+        <div class="col">
+          <h6 class="fw-bold pt-4">Saved Memo with signature</h6>
+          <p class="text-success">Right Click to download*</P>
+        </div>
+        <div class="col">
+          <button type="button" id="myBtn" class="btn btn-success mt-4">
+            <!-- <span class="me-2"><i class="bi bi-arrow-right-circle"></i></span> -->
+            Update Memo
+          </button>
+
+          <!-- Modal HTML -->
+          <div id="myModal" class="modal fade" data-bs-backdrop="static" tabindex="-1">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Return Signed Memo</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+
+                  <form class="needs-validation" method="POST" enctype="multipart/form-data">
+                    <div class="form-row">
+                      <div class="col-md-12 mb-2">
+                        <!-- <label for="validationCustom01">Memo Title:</label> -->
+                        <input type="hidden" class="form-control" id="" name="memo_name" required>
+                        <div class="valid-feedback">
+                          Looks good!
+                        </div>
+                      </div>
+                      <div class="col-md-12 mb-2">
+                        <label for="validationCustom01">Select a file:</label>
+                        <input type="file" class="form-control" id="" name="image" value="" accept=".jpg,.jpeg,.png" required>
+                        <div class="valid-feedback">
+                          Looks good!
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <input type="reset" class="btn btn-secondary">
+                      <button class="btn btn-primary">Upload</button>
+                    </div>
+                  </form>
+                  <?php
+                  if (isset($_POST['memo_name'])) {
+                    if (!empty($_FILES["image"]["name"])) {
+                      $fileName = basename($_FILES["image"]["name"]);
+                      $fileType = pathinfo($fileName, PATHINFO_EXTENSION);
+
+                      // Allow certain file formats 
+                      $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+                      if (in_array($fileType, $allowTypes)) {
+                        $image = $_FILES['image']['tmp_name'];
+                        $imgContent = addslashes(file_get_contents($image));
+
+                        $insert = $conn->query("INSERT into `memos` (memo_title, signatories,`image`) VALUES ('" . $_POST['memo_name'] . "', '" . $_POST['signatories'] . "','$imgContent')");
+                        if ($insert) {
+                          echo "<script>window.location.href='memo.php'</script>";
+                        } else {
+                          echo "<script>
+                                        alert('Failed');
+                                        window.location.href='memo.php';
+                                        </script>";
+                        }
+                      }
+                    } else {
+                      echo '<script>alert("No image data!") 
+                                window.location.href="memo.php"</script>';
+                    }
+                  }
+                  ?>
+
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div id="saveMemo">
-            <img src="./images/memo-template.jpg" alt="memorandum"/>
-            
+      </div>
 
-            <!-- The saved image -->
-            <img id="saved-image" src="" draggable="true">
-        </div>
-        <div class="row">
-            <div class="col">
-                <h6 class="fw-bold pt-4">Saved Memo with signature</h6>
-                <p class="text-success">Right Click to download*</P>
-            </div>
-            <div class="col">
-                <button type="button" id="myBtn" class="btn btn-success mt-4">
-                      <!-- <span class="me-2"><i class="bi bi-arrow-right-circle"></i></span> -->
-                      Update Memo
-                    </button>
-
-                    <!-- Modal HTML -->
-                    <div id="myModal" class="modal fade" data-bs-backdrop="static" tabindex="-1">
-                      <div class="modal-dialog">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title">Return Signed Memo</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                          </div>
-                          <div class="modal-body">
-
-                            <form class="needs-validation" method="POST" enctype="multipart/form-data">
-                              <div class="form-row">
-                                <div class="col-md-12 mb-2">
-                                  <!-- <label for="validationCustom01">Memo Title:</label> -->
-                                  <input type="hidden" class="form-control" id="" name="memo_name" required>
-                                  <div class="valid-feedback">
-                                    Looks good!
-                                  </div>
-                                </div>
-                                <div class="col-md-12 mb-2">
-                                  <label for="validationCustom01">Select a file:</label>
-                                  <input type="file" class="form-control" id="" name="image" value="" accept=".jpg,.jpeg,.png" required>
-                                  <div class="valid-feedback">
-                                    Looks good!
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="modal-footer">
-                                <input type="reset" class="btn btn-secondary">
-                                <button class="btn btn-primary">Upload</button>
-                              </div>  
-                            </form>
-                            <?php
-                            if (isset($_POST['memo_name'])) {
-                                if (!empty($_FILES["image"]["name"])) {
-                                    $fileName = basename($_FILES["image"]["name"]);
-                                    $fileType = pathinfo($fileName, PATHINFO_EXTENSION);
-
-                                    // Allow certain file formats 
-                                    $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
-                                    if (in_array($fileType, $allowTypes)) {
-                                        $image = $_FILES['image']['tmp_name'];
-                                        $imgContent = addslashes(file_get_contents($image));
-
-                                        $insert = $conn->query("INSERT into `memos` (memo_title, signatories,`image`) VALUES ('" . $_POST['memo_name'] . "', '" . $_POST['signatories'] . "','$imgContent')");
-                                        if ($insert) {
-                                            echo "<script>window.location.href='memo.php'</script>";
-                                        } else {
-                                            echo "<script>
-                                        alert('Failed');
-                                        window.location.href='memo.php';
-                                        </script>";
-                                        }
-                                    }
-                                } else {
-                                    echo '<script>alert("No image data!") 
-                                window.location.href="memo.php"</script>';
-                                }
-                            }
-                            ?>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-            </div>
-        </div>
-        
-        <div id="output"></div>
+      <div id="output"></div>
     </div>
   </main>
 
@@ -184,12 +190,12 @@ include "../dbcon.php";
 
   <script>
     // function modalOpen(){
-    $(document).ready(function () {
-      $("#myBtn").click(function () {
+    $(document).ready(function() {
+      $("#myBtn").click(function() {
         $("#myModal").modal("toggle");
       });
     });
-  // }
+    // }
   </script>
 
   <script>
@@ -219,96 +225,104 @@ include "../dbcon.php";
       ctx.stroke();
       ctx.beginPath();
       ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
-}
-  // Save the image as a PNG file
-  function saveImage() {
-    var dataURL = canvas.toDataURL("image/png");
-    document.getElementById("saved-image").src = dataURL;
-  }
-
-  // Add event listeners to the canvas
-  canvas.addEventListener("mousedown", startPosition);
-  canvas.addEventListener("mouseup", finishedPosition);
-  canvas.addEventListener("mousemove", draw);
-
-  // Make the saved image draggable
-  dragElement(document.getElementById("saved-image"));
-
-  // Function to make an element draggable
-  function dragElement(element) {
-    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-    element.onmousedown = dragMouseDown;
-
-    function dragMouseDown(e) {
-      e = e || window.event;
-      e.preventDefault();
-      pos3 = e.clientX;
-      pos4 = e.clientY;
-      document.onmouseup = closeDragElement;
-      document.onmousemove = elementDrag;
+    }
+    // Save the image as a PNG file
+    function saveImage() {
+      var dataURL = canvas.toDataURL("image/png");
+      document.getElementById("saved-image").src = dataURL;
     }
 
-    function elementDrag(e) {
-      e = e || window.event;
-      e.preventDefault();
-      pos1 = pos3 - e.clientX;
-      pos2 = pos4 - e.clientY;
-      pos3 = e.clientX;
-      pos4 = e.clientY;
-      element.style.top = (element.offsetTop - pos2) + "px";
-      element.style.left = (element.offsetLeft - pos1) + "px";
+    // Add event listeners to the canvas
+    canvas.addEventListener("mousedown", startPosition);
+    canvas.addEventListener("mouseup", finishedPosition);
+    canvas.addEventListener("mousemove", draw);
+
+    // Make the saved image draggable
+    dragElement(document.getElementById("saved-image"));
+
+    // Function to make an element draggable
+    function dragElement(element) {
+      var pos1 = 0,
+        pos2 = 0,
+        pos3 = 0,
+        pos4 = 0;
+      element.onmousedown = dragMouseDown;
+
+      function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+      }
+
+      function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        element.style.top = (element.offsetTop - pos2) + "px";
+        element.style.left = (element.offsetLeft - pos1) + "px";
+      }
+
+      function closeDragElement() {
+        document.onmouseup = null;
+        document.onmousemove = null;
+      }
     }
+    // Make the saved image resizable
+    interact('#saved-image')
+      .resizable({
+        edges: {
+          left: true,
+          right: true,
+          bottom: true,
+          top: true
+        }
+      })
+      .on('resizemove', function(event) {
+        var target = event.target;
+        var x = (parseFloat(target.getAttribute('data-x')) || 0);
+        var y = (parseFloat(target.getAttribute('data-y')) || 0);
 
-    function closeDragElement() {
-      document.onmouseup = null;
-      document.onmousemove = null;
-    }
-  }
-  // Make the saved image resizable
-interact('#saved-image')
-	.resizable({
-		edges: { left: true, right: true, bottom: true, top: true }
-	})
-	.on('resizemove', function (event) {
-		var target = event.target;
-		var x = (parseFloat(target.getAttribute('data-x')) || 0);
-		var y = (parseFloat(target.getAttribute('data-y')) || 0);
+        // update the element's style
+        target.style.width = event.rect.width + 'px';
+        target.style.height = event.rect.height + 'px';
 
-		// update the element's style
-		target.style.width = event.rect.width + 'px';
-		target.style.height = event.rect.height + 'px';
+        // translate when resizing from top or left edges
+        x += event.deltaRect.left;
+        y += event.deltaRect.top;
 
-		// translate when resizing from top or left edges
-		x += event.deltaRect.left;
-		y += event.deltaRect.top;
+        target.style.webkitTransform = target.style.transform =
+          'translate(' + x + 'px,' + y + 'px)';
 
-		target.style.webkitTransform = target.style.transform =
-			'translate(' + x + 'px,' + y + 'px)';
-
-		target.setAttribute('data-x', x);
-		target.setAttribute('data-y', y);
-	});
+        target.setAttribute('data-x', x);
+        target.setAttribute('data-y', y);
+      });
 
     // convert signed memo as image
-  
-  // Define the function 
-  // to screenshot the div
-  function downloadMemo() {
+
+    // Define the function 
+    // to screenshot the div
+    function downloadMemo() {
       let div =
-          document.getElementById('saveMemo');
+        document.getElementById('saveMemo');
 
       // Use the html2canvas
       // function to take a screenshot
       // and append it
       // to the output div
       html2canvas(div).then(
-          function (canvas) {
-              document
-              .getElementById('output')
-              .appendChild(canvas);
-          })
-  }
-</script>
+        function(canvas) {
+          document
+            .getElementById('output')
+            .appendChild(canvas);
+        })
+    }
+  </script>
 
 
 
@@ -436,7 +450,7 @@ images.forEach(image => {
 
   </script> -->
 
-          
+
 
 </body>
 
