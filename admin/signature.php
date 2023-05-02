@@ -143,8 +143,12 @@ include "../dbcon.php";
                         $image = $_FILES['image']['tmp_name'];
                         $imgContent = addslashes(file_get_contents($image));
 
-                        $insert = $conn->query("UPDATE memos SET `image` ='$imgContent' WHERE id = ".$_GET['id']."");
-                        if ($insert) {
+                        $insert = $conn->query("UPDATE memos SET `image` ='$imgContent', is_signed = is_signed + 1 WHERE id = ".$_GET['id']."");
+                        $getid = mysqli_query($conn, "SELECT * FROM `forwarding_tracking` WHERE memo_id = ".$_GET['id']." ORDER BY id DESC LIMIT 1;");
+                        $idrow = mysqli_fetch_array($getid);
+                        $id = $idrow['id'];
+                        $insert2 = $conn->query("UPDATE forwarding_tracking SET `is_signed` = 1 WHERE memo_id = ".$_GET['id'].";");
+                        if ($insert2) {
                           echo "<script>window.location.href='forSignature.php'</script>";
                         } else {
                           echo "<script>

@@ -142,7 +142,9 @@ include "../dbcon.php";
                   </thead>
                   <tbody style="cursor: pointer" id="myBtn">
                     <?php
-                    $sql = "SELECT id,memo_title,user_id, DATE(date_from) as date_from,DATE(date_to) as date_to,DATE(date_forwarded) as date_forwarded, memo_type FROM `final_memo`;";
+                    $sql = "SELECT m.`memo_title`, m.id, date(fm.`date_from`) as date_from, date(fm.`date_to`) as date_to, fm.`date_forwarded`, fm.`memo_type` FROM `final_memo` fm
+                    INNER JOIN `memos` m ON m.`id` = fm.`memo_id`
+                    WHERE m.`user_id` = '".$_SESSION['userid']."' AND m.`ready_for_forwarding` = 1;";
                     $actresult = mysqli_query($conn, $sql);
 
                     while ($result = mysqli_fetch_assoc($actresult)) {

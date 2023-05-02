@@ -30,6 +30,7 @@
                         echo "Logged IN";
                         $_SESSION['useridname'] = $row['employee_name'];
                         $_SESSION['username'] = $row['username'];
+                        $_SESSION['userid'] = $row['user_id'];
                         if($row['privilege']==="admin")
                         {
                             header("Location: admin/index.php");

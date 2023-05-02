@@ -40,7 +40,9 @@ include "../dbcon.php";
                   </thead>
                   <tbody style="cursor: pointer" id="myBtn">
                     <?php
-                      $sql = "SELECT id,memo_title, DATE(date_created) as date_created, signatories, is_signed, user_id FROM `memos`;";
+                      $sql = "SELECT DISTINCT(m.id), m.memo_title, DATE(m.date_created) AS date_created, m.signatories,m.is_signed, m.user_id  FROM `forwarding_tracking` ft 
+                      INNER JOIN `memos` m ON m.`id` = ft.`memo_id`
+                      WHERE m.user_id = ".$_SESSION['userid']." and ft.is_signed = 0;";
                       $actresult = mysqli_query($conn, $sql);
 
                       while ($result = mysqli_fetch_assoc($actresult)) {
