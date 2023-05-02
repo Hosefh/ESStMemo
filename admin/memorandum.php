@@ -35,7 +35,6 @@ include "../dbcon.php";
       width: 200px;
       height: 200px;
       cursor: move;
-      hover: border: 1px solid #ccc;
     }
   </style>
 </head>
