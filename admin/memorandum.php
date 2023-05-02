@@ -51,7 +51,14 @@ include "../dbcon.php";
   <main class="mt-5 pt-3 px-4">
     <div class="container-fluid">
       <!-- Button to open the modal -->
-      <h1 class="mt-4 mb-3 text-left fw-bold">Memorandum</h1>
+         <div class="row">
+                    <div class="col">
+                        <h1 class="mt-4 mb-3 text-left fw-bold">Memorandum</h1>
+                    </div>
+                    <div class="col">
+                        <Button class="btn btn-success mt-4">Mark as Recieved</Button>
+                    </div>
+                </div>
         <div id="saveMemo">
             <img src="./images/memo-template.jpg" alt="memorandum"/>
         </div>
