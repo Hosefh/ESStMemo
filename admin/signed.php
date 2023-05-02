@@ -29,10 +29,10 @@ include "../dbcon.php";
               <span><i class="bi bi-file-text-fill me-2"></i></span>Signed Memorandums
             </div>
             <div class="card-body">
-                    <button type="button" id="myBtn" class="btn btn-outline-success">
+                    <!-- <button type="button" id="myBtn" class="btn btn-outline-success">
                       <span class="me-2"><i class="bi bi-arrow-right-circle"></i></span>
                       Forward Signed Memo
-                    </button>
+                    </button> -->
 
                     <!-- Modal HTML -->
                     <div id="myModal" class="modal fade" data-bs-backdrop="static" tabindex="-1">

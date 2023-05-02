@@ -82,8 +82,85 @@ include "../dbcon.php";
             <!-- The saved image -->
             <img id="saved-image" src="" draggable="true">
         </div>
-        <h6 class="fw-bold pt-4">Saved Memo with signature</h6>
-        <p class="text-success">Right Click to download*</P>
+        <div class="row">
+            <div class="col">
+                <h6 class="fw-bold pt-4">Saved Memo with signature</h6>
+                <p class="text-success">Right Click to download*</P>
+            </div>
+            <div class="col">
+                <button type="button" id="myBtn" class="btn btn-success mt-4">
+                      <!-- <span class="me-2"><i class="bi bi-arrow-right-circle"></i></span> -->
+                      Update Memo
+                    </button>
+
+                    <!-- Modal HTML -->
+                    <div id="myModal" class="modal fade" data-bs-backdrop="static" tabindex="-1">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title">Return Signed Memo</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                          </div>
+                          <div class="modal-body">
+
+                            <form class="needs-validation" method="POST" enctype="multipart/form-data">
+                              <div class="form-row">
+                                <div class="col-md-12 mb-2">
+                                  <!-- <label for="validationCustom01">Memo Title:</label> -->
+                                  <input type="hidden" class="form-control" id="" name="memo_name" required>
+                                  <div class="valid-feedback">
+                                    Looks good!
+                                  </div>
+                                </div>
+                                <div class="col-md-12 mb-2">
+                                  <label for="validationCustom01">Select a file:</label>
+                                  <input type="file" class="form-control" id="" name="image" value="" accept=".jpg,.jpeg,.png" required>
+                                  <div class="valid-feedback">
+                                    Looks good!
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <input type="reset" class="btn btn-secondary">
+                                <button class="btn btn-primary">Upload</button>
+                              </div>  
+                            </form>
+                            <?php
+                            if (isset($_POST['memo_name'])) {
+                                if (!empty($_FILES["image"]["name"])) {
+                                    $fileName = basename($_FILES["image"]["name"]);
+                                    $fileType = pathinfo($fileName, PATHINFO_EXTENSION);
+
+                                    // Allow certain file formats 
+                                    $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+                                    if (in_array($fileType, $allowTypes)) {
+                                        $image = $_FILES['image']['tmp_name'];
+                                        $imgContent = addslashes(file_get_contents($image));
+
+                                        $insert = $conn->query("INSERT into `memos` (memo_title, signatories,`image`) VALUES ('" . $_POST['memo_name'] . "', '" . $_POST['signatories'] . "','$imgContent')");
+                                        if ($insert) {
+                                            echo "<script>window.location.href='memo.php'</script>";
+                                        } else {
+                                            echo "<script>
+                                        alert('Failed');
+                                        window.location.href='memo.php';
+                                        </script>";
+                                        }
+                                    }
+                                } else {
+                                    echo '<script>alert("No image data!") 
+                                window.location.href="memo.php"</script>';
+                                }
+                            }
+                            ?>
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+            </div>
+        </div>
+        
         <div id="output"></div>
     </div>
   </main>
@@ -104,6 +181,16 @@ include "../dbcon.php";
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <!-- Bootstrap JS -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    // function modalOpen(){
+    $(document).ready(function () {
+      $("#myBtn").click(function () {
+        $("#myModal").modal("toggle");
+      });
+    });
+  // }
+  </script>
 
   <script>
     // Get the canvas and its context
