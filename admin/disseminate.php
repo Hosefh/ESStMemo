@@ -26,7 +26,7 @@ include "../dbcon.php";
         <div class="col-md-12 mb-3">
           <div class="card">
             <div class="card-header">
-              <span><i class="bi bi-file-text-fill me-2"></i></span>Disseminated Memorandums
+              <span><i class="bi bi-file-text-fill me-2"></i></span>Ready for Dissemination Memorandums
             </div>
             <div class="card-body">
                 <!-- <button class="btn btn-primary" id="myBtn"><span
@@ -181,7 +181,8 @@ include "../dbcon.php";
                               class="me-2"><i class="bi bi-folder2-open"></i></span> View Memo</a> -->
                                         <!-- <a href="#fwd<?php echo $result['id']; ?>" data-toggle="modal" class="btn btn-success btn-sm"><span
                               class="me-2"><i class="bi bi-arrow-right"></i></span> Forward
-                          </a>  -->
+                          </a>  --> 
+                                     
                                     <a href="#dis<?php echo $result['id']; ?>" data-toggle="modal" class="btn btn-primary btn-sm"><span
                                           class="me-2"><i class="bi bi-arrow-up-right-circle"></i></span> Disseminate
                                       </a>
@@ -192,7 +193,8 @@ include "../dbcon.php";
                                   </td>
                                 </tr>
 
-                      <div id="dis<?php echo $result['id']; ?>" class="modal fade" data-bs-backdrop="static" tabindex="-1">
+                                <!-- for disseminate modal -->
+                    <div id="dis<?php echo $result['id']; ?>" class="modal fade" data-bs-backdrop="static" tabindex="-1">
                       <div class="modal-dialog">
                         <div class="modal-content">
                           <div class="modal-header">
@@ -284,6 +286,28 @@ include "../dbcon.php";
                         </div>
                       </div>
                     </div>
+
+                    <!-- end of disseminate modal -->
+
+                    <!-- start of info modal -->
+                    <div id="info<?php echo $result['id']; ?>" class="modal fade" data-bs-backdrop="static" tabindex="-1">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title">Disseminate Memo</h5>
+                            <!-- <button type="button" class="btn-close" data-bs-dismiss="modal"></button> -->
+                          </div>
+                          <div class="modal-body">
+                            <div class="row">
+                                <div class="col">Amazing</div>
+                                <div class="col">Amazing2</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- end of info modal -->
 
                   
                     <?php } ?>
