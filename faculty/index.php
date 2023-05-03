@@ -1,3 +1,7 @@
+<?php 
+include "../dbcon.php";
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,8 +38,11 @@
                         <div class="col-md-8">
                             <div class="card-body">
                                 <h5 class="card-title">Memo Recieved</h5>
-                                <h1 class="card-text fw-bold">4</h1>
-                                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                                <?php 
+                                $query = mysqli_query($conn, "SELECT COUNT(*) as `count` from disseminate where forwarded_to = ".$_SESSION['userid'].";");
+                                $number = mysqli_fetch_array($query);
+                                ?>
+                                <h1 class="card-text fw-bold"><?php echo $number['count']?></h1>
                             </div>
                         </div>
                     </div>
@@ -51,8 +58,12 @@
                         <div class="col-md-8">
                             <div class="card-body">
                                 <h5 class="card-title">Signed Memo</h5>
-                                <h1 class="card-text fw-bold">0</h1>
-                                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                                <?php 
+                                $query = mysqli_query($conn, "SELECT COUNT(*) as `count` from disseminate where forwarded_to = ".$_SESSION['userid']." and received = 1;");
+                                $number = mysqli_fetch_array($query);
+                                ?>
+                                <h1 class="card-text fw-bold"><?php echo $number['count']?></h1>
+                                <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
                             </div>
                         </div>
                     </div>

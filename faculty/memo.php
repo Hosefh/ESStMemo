@@ -204,6 +204,9 @@ include "../dbcon.php";
                                     <span><i class="bi bi-check me-2"></i></span>
                                       Mark as Recieve
                                   </Button>
+                              </form>
+                              <?php
+                              ?
                           </div>
                             </div>
                           </div>
