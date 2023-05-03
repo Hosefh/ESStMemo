@@ -204,22 +204,22 @@ include "../dbcon.php";
                                               <!-- <h6>Create Signature</h6>
                                   <canvas id="signatureCanvas" width="300" height="150" style="border: 1px ridge #000;"></canvas> -->
 
-                                              <div class="form-row pt-2">
-                                                <div class="col-md-12 mb-2">
-                                                  <label for="validationCustom01">Forward To:</label>
-                                                  <input type="number" class="form-control" id="" name="faculty_id" required>
-                                                  <div class="valid-feedback">
-                                                    Looks good!
-                                                  </div>
-                                                </div>
-                                                <div class="col-md-12 mb-2">
-                                                  <label for="validationCustom01">Select a file:</label>
-                                                  <input type="file" class="form-control" id="" name="image" value="" accept=".jpg,.jpeg,.png" required>
-                                                  <div class="valid-feedback">
-                                                    Looks good!
-                                                  </div>
-                                                </div>
-                                              </div>
+                                <div class="form-row pt-2">
+                                  <div class="col-md-12 mb-2">
+                                    <label for="validationCustom01">Forward To:</label>
+                                    <input type="number" class="form-control" id="" name="faculty_id" required>
+                                    <div class="valid-feedback">
+                                      Looks good!
+                                    </div>
+                                  </div>
+                                  <div class="col-md-12 mb-2">
+                                    <label for="validationCustom01">Select a file:</label>
+                                    <input type="file" class="form-control" id="" name="image" value="" accept=".jpg,.jpeg,.png" required>
+                                    <div class="valid-feedback">
+                                      Looks good!
+                                    </div>
+                                  </div>
+                                </div>
                               </div>
 
                               <!-- Modal Footer -->

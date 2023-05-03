@@ -53,11 +53,6 @@ include "../dbcon.php";
         <div class="col">
           <h1 class="mt-4 mb-3 text-left fw-bold">Memorandum</h1>
         </div>
-        <div class="col">
-          <Button class="btn btn-success mt-4">
-          <span><i class="bi bi-check me-2"></i></span>
-            Mark as Recieved
-        </Button>
         </div>
       </div>
       <div id="saveMemo">
@@ -70,6 +65,34 @@ include "../dbcon.php";
         echo "</div>";
         ?>
         <!-- <img src="./images/memo-template.jpg" alt="memorandum"/> -->
+        
+        <form class="needs-validation" method="POST">
+          <input type="number" class="form-control"  name="memo_id" value="<?php echo $_GET['id']?>"  hidden>
+          <!-- <input type='submit' name='submit' value='Mark as Recieve'> -->
+          <Button class="btn btn-success mt-4">
+          <span><i class="bi bi-check me-2"></i></span>
+            Mark as Recieve
+          </Button>
+          <!-- <Button class="btn btn-success mt-4">
+          <span><i class="bi bi-check me-2"></i></span>
+            Mark as Recieved -->
+        </form>
+        <?php
+         if (isset($_POST['memo_id']))
+         {
+          $update = $conn->query("UPDATE `disseminate` d SET d.`received` = 1 WHERE d.`memo_id` = ".$_POST['memo_id']." AND d.`forwarded_to` = ".$_SESSION['userid'].";");
+          if ($update)
+          {
+            echo '<script>alert("Received Successfully!") 
+                window.location.href="viewMemo.php"</script>';
+          }
+          else
+          {
+            echo '<script>alert("Failed!") 
+                window.location.href="viewMemo.php"</script>';
+          }
+         }
+        ?>
       </div>
     </div>
   </main>
