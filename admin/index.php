@@ -63,7 +63,7 @@ include "../dbcon.php";
                             <div class="card-body">
                                 <h5 class="card-title">Signed Memo</h5>
                                 <?php 
-                                $query = mysqli_query($conn, "SELECT COUNT(*) as `count` from final_memo");
+                                $query = mysqli_query($conn, "SELECT COUNT(*) as `count` from memos where ready_for_forwarding = 1");
                                 $number = mysqli_fetch_array($query);
                                 ?>
                                 <h1 class="card-text fw-bold"><?php echo $number['count'] ?></h1>

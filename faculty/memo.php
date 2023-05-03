@@ -129,7 +129,9 @@ include "../dbcon.php";
                   </thead>
                   <tbody style="cursor: pointer" id="myBtn">
                   <?php
-                    $sql = "SELECT id,memo_title,user_id, DATE(date_from) as date_from,DATE(date_to) as date_to,DATE(date_forwarded) as date_forwarded, memo_type FROM `final_memo`;";
+                    $sql = "SELECT m.`id`,m.`memo_title`,m.`memo_type`, CONCAT(DATE(m.`date_from`), ' - ',DATE(m.`date_to`)) AS time_span, d.`transdate`,m.image FROM `disseminate` d 
+                    INNER JOIN `memos` m ON d.`memo_id` = m.`id`
+                    WHERE d.`forwarded_to` = '".$_SESSION['userid']."';";
                     $actresult = mysqli_query($conn, $sql);
 
                     while ($result = mysqli_fetch_assoc($actresult)) {
@@ -152,10 +154,10 @@ include "../dbcon.php";
                                 ?>
                               </td>
                               <td>
-                              <?php echo $result['date_from']; ?> - <?php echo $result['date_to']; ?>
+                              <?php echo $result['time_span']; ?>
                               </td>
                               <td>
-                                <?php echo $result['date_forwarded']; ?>
+                                <?php echo $result['transdate']; ?>
                               </td>
                               <td>
                                 <div class="d-grid gap-2 d-md-flex">
@@ -210,7 +212,7 @@ include "../dbcon.php";
                               <p>Image Preview</p>
                                 <?php
                                 $id = $result['id'];
-                                $edit = mysqli_query($conn, "select * from final_memo where id='" . $result['id'] . "'");
+                                $edit = mysqli_query($conn, "select * from memos where id='" . $result['id'] . "'");
                                 $erow = mysqli_fetch_array($edit);
                                 echo '<div>
                                     <img src="data:image/jpeg;base64,' . base64_encode($erow['image']) . '" id="memoImage" class="img-fluid" />';

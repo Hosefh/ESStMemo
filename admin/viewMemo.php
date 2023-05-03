@@ -34,17 +34,17 @@ include "../dbcon.php";
                   <thead>
                     <tr>
                       <th>Memorandum Title</th>
-                      <th>Signed?</th>
-                      <th>Date Signed</th>
-                      <th>Date Sent</th>
+                      <th>Memo Type</th>
+                      <th>Date Span</th>
+                      <th>Date Recieved</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody style="cursor: pointer" id="myBtn">
                     <?php
-                    $sql = "SELECT m.`memo_title`, m.id, date(fm.`date_from`) as date_from, date(fm.`date_to`) as date_to, fm.`date_forwarded`, fm.`memo_type` FROM `final_memo` fm
-                    INNER JOIN `memos` m ON m.`id` = fm.`memo_id`
-                    WHERE m.`user_id` = '" . $_SESSION['userid'] . "' AND m.`ready_for_forwarding` = 1;";
+                    $sql = "SELECT m.`id`,m.`memo_title`,m.`memo_type`, CONCAT(DATE(m.`date_from`), ' - ',DATE(m.`date_to`)) AS time_span, d.`transdate`,m.image FROM `disseminate` d 
+                    INNER JOIN `memos` m ON d.`memo_id` = m.`id`
+                    WHERE d.`forwarded_to` = '".$_SESSION['userid']."';";
                     $actresult = mysqli_query($conn, $sql);
 
                     while ($result = mysqli_fetch_assoc($actresult)) {
@@ -67,14 +67,14 @@ include "../dbcon.php";
                                     ?>
                                   </td>
                                   <td>
-                                  <?php echo $result['date_from']; ?> - <?php echo $result['date_to']; ?>
+                                  <?php echo $result['time_span']; ?>
                                   </td>
                                   <td>
-                                    <?php echo $result['date_forwarded']; ?>
+                                    <?php echo $result['transdate']; ?>
                                   </td>
                                   <td>
                                     <div class="d-grid gap-2 d-md-flex">
-                                    <a href="./forCreateMemo.php"<?php echo $result['id']; ?> class="btn btn-primary btn-sm me-md-2"><span
+                                    <a href="./forCreateMemo.php?id=<?php echo $result['id']; ?>" class="btn btn-primary btn-sm me-md-2"><span
                               class="me-2"><i class="bi bi-folder2-open"></i></span> View Memo</a>
                                         <!-- <a href="#fwd<?php echo $result['id']; ?>" data-toggle="modal" class="btn btn-success btn-sm"><span
                               class="me-2"><i class="bi bi-arrow-right"></i></span> Forward
