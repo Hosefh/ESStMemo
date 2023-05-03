@@ -122,7 +122,7 @@ include "../dbcon.php";
                     <?php
                     $sql = "SELECT DISTINCT(m.id), m.memo_title, DATE(m.date_created) AS date_created, m.signatories,m.is_signed, m.user_id  FROM `forwarding_tracking` ft 
                     INNER JOIN `memos` m ON m.`id` = ft.`memo_id`
-                    WHERE m.user_id = ".$_SESSION['userid']." and ft.is_signed = 1;";
+                    WHERE m.user_id = ".$_SESSION['userid']." and ft.is_signed = 1 and m.ready_for_forwarding = 0 and ft.is_forwarded = 0;";
                     $actresult = mysqli_query($conn, $sql);
 
                     while ($result = mysqli_fetch_assoc($actresult)) {
@@ -200,19 +200,27 @@ include "../dbcon.php";
                                                 <!-- Modal Footer -->
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                    <button type="button" class="btn btn-primary" id="update">Forward to Signatory</button>
+                                                    <button class="btn btn-primary">Forward to Signatory</button>
                                                 </div>
                                               </form>
                                               <?php
                                               if (isset($_POST['user'])) {
-                                                $sql = "UPDATE `memos` SET forwarded_to = '" . $_POST['user'] . "'
-                                            WHERE id='" . $_POST['editid'] . "';";
+                                                $sql = "UPDATE `memos` SET user_id = '" . $_POST['user'] . "'
+                                                        WHERE id ='" . $_POST['editid'] . "';";
+                                                        
+                                                $getid = mysqli_query($conn, "SELECT * FROM `forwarding_tracking` WHERE memo_id = ".$_POST['editid']." ORDER BY id DESC LIMIT 1;");
+                                                $idrow = mysqli_fetch_array($getid);
+                                                $id = $idrow['id'];
+                                                $insert2 = $conn->query("UPDATE forwarding_tracking SET `is_forwarded` = 1 WHERE memo_id = ".$_POST['editid'].";");
+
+                                                $conn->query("INSERT into forwarding_tracking (memo_id, forwarded_to) VALUES (".$_POST['editid'].",'" . $_POST['user'] . "');");
+
                                                 if ($conn->query($sql) === TRUE) {
                                                   echo '<script>alert("Memo Forwarded Successfully!") 
-                                                      window.location.href="memo.php"</script>';
+                                                      window.location.href="signed.php"</script>';
                                                 } else {
                                                   echo '<script>alert("Forwarding Failed!\n Please Check SQL Connection String!") 
-                                                      window.location.href="memo.php"</script>';
+                                                      window.location.href="signed.php"</script>';
                                                 }
                                               }
                                               ?>

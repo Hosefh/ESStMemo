@@ -148,6 +148,14 @@ include "../dbcon.php";
                         $idrow = mysqli_fetch_array($getid);
                         $id = $idrow['id'];
                         $insert2 = $conn->query("UPDATE forwarding_tracking SET `is_signed` = 1 WHERE memo_id = ".$_GET['id'].";");
+                        
+                        $query = mysqli_query($conn, "SELECT * from memos WHERE id = ".$_GET['id']." ");
+                        $checker = mysqli_fetch_array($query);
+
+                        if ($checker['signatories'] == $checker['is_signed'])
+                        {
+                          $conn->query("UPDATE memos SET ready_for_forwarding = 1 WHERE id = ".$_GET['id']."");
+                        }
                         if ($insert2) {
                           echo "<script>window.location.href='forSignature.php'</script>";
                         } else {
