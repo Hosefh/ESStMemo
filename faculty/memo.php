@@ -174,29 +174,7 @@ include "../dbcon.php";
                                 </div>
                               </td>
                             </tr>
-                            <!-- Start of Edit Modal -->
-                            <!-- Edit Modal HTML -->
-                            <!-- <div id="edit" class="modal fade">
-                      <div class="modal-dialog  modal-fullscreen">
-                        <div class="modal-content">
-                          <form id="update_form" method="POST">
-                            <div class="modal-body">
- 
-                            <img src="./images/memo-template.jpg" style="border: 2px solid black;"
-                            onclick="addSignatureOnClick()">
-
-                            </div>
-                            <div class="modal-footer">
-                              <input type="hidden" value="2" name="type">
-                              <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                              <button class="btn btn-info" id="update">Save</button>
-                            </div>
-                          </form>
-
-                        </div>
-                      </div>
-                    </div> -->
-                            <!-- End of Edit Modal -->
+                            
 
                             <!-- View Modal HTML -->
                             <div class="modal fade" id="view<?php echo $result['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="memoModalLabel" aria-hidden="true">
@@ -221,163 +199,20 @@ include "../dbcon.php";
                                             <!-- <h6>Create Signature</h6>
                                   <canvas id="signatureCanvas" width="300" height="150" style="border: 1px ridge #000;"></canvas> -->
                                           
-                                            
-                                </form>
+                                  <div class="modal-footer">
+                                  <Button class="btn btn-success mt-4">
+                                    <span><i class="bi bi-check me-2"></i></span>
+                                      Mark as Recieve
+                                  </Button>
+                          </div>
                             </div>
                           </div>
                         </div>
                       </div>
                               <!-- End of View Memo Modal -->
 
-                            <!-- Modal to display the memo image -->
-
-                            <!-- Start of Forward Memo Modal -->
-                    <div id="fwd<?php echo $result['id']; ?>" class="modal fade" data-bs-backdrop="static" tabindex="-1">
-                              <div class="modal-dialog">
-                                <div class="modal-content">
-                                  <div class="modal-header">
-                                    <h5 class="modal-title">Forward Memo to Admin</h5>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                  </div>
-                                  <div class="modal-body">
-
-                                    <form class="needs-validation" method="POST" enctype="multipart/form-data">
-                                      <div class="form-row">
-                                        <div class="col-md-12 mb-2">
-                                          <label for="validationCustom01">ID:</label>
-                                          <input type="number" class="form-control" id="" name="signatory_id" required>
-                                          <div class="valid-feedback">
-                                            Looks good!
-                                          </div>
-                                        </div>
-                                        <div class="col-md-12 mb-2">
-                                          <label for="validationCustom01">Signed Memo:</label>
-                                          <input type="file" class="form-control" id="" name="image" value="" accept=".jpg,.jpeg,.png" required>
-                                          <div class="valid-feedback">
-                                            Looks good!
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="modal-footer">
-                                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                        <button class="btn btn-primary">Forward</button>
-                                      </div>  
-                                    </form>
-                                    <?php
-                                    if (isset($_POST['memo_name'])) {
-                                        if (!empty($_FILES["image"]["name"])) {
-                                            $fileName = basename($_FILES["image"]["name"]);
-                                            $fileType = pathinfo($fileName, PATHINFO_EXTENSION);
-
-                                            // Allow certain file formats 
-                                            $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
-                                            if (in_array($fileType, $allowTypes)) {
-                                                $image = $_FILES['image']['tmp_name'];
-                                                $imgContent = addslashes(file_get_contents($image));
-
-                                                $insert = $conn->query("INSERT into `memos` (memo_title, signatories,`image`) VALUES ('" . $_POST['memo_name'] . "', '" . $_POST['signatories'] . "','$imgContent')");
-                                                if ($insert) {
-                                                    echo "<script>window.location.href='memo.php'</script>";
-                                                } else {
-                                                    echo "<script>
-                                        alert('Failed');
-                                        window.location.href='memo.php';
-                                        </script>";
-                                                }
-                                            }
-                                        } else {
-                                            echo '<script>alert("No image data!") 
-                                window.location.href="memo.php"</script>';
-                                        }
-                                    }
-                                    ?>
-
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <!-- End of Forward Modal -->
-                    
-
-                            <!-- First Modal -->
-                    <div class="modal fade" id="edit<?php echo $result['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="memoModalLabel" aria-hidden="true">
-                      <div class="modal-dialog">
-                          <div class="modal-content">
-                          <!-- Modal Header -->
-                          <div class="modal-header">
-                              <h4 class="modal-title">Memorandum</h4>
-                              <button type="button" class="close" data-dismiss="modal">&times;</button>
-                          </div>
-
-                          <!-- Modal Body with Image -->
-                          <div class="modal-body" id="imageModal">
-                            <p>Image Preview</P>
-                              <!-- <img src="https://templatearchive.com/wp-content/uploads/2017/08/memo-template-01.jpg" class="img-fluid" alt="Modal Image" id="imageModal"> -->
-                              <?php
-                              $id = $result['id'];
-                              $edit = mysqli_query($conn, "select * from memos where id='" . $result['id'] . "'");
-                              $erow = mysqli_fetch_array($edit);
-                              echo '<div>
-                                    <img src="data:image/jpeg;base64,' . base64_encode($erow['image']) . '" id="memoImage" class="img-fluid" />';
-                              echo "</div>";
-                              ?>
-                                          <!-- <h6>Create Signature</h6>
-                                  <canvas id="signatureCanvas" width="300" height="150" style="border: 1px ridge #000;"></canvas> -->
-
-                                          <div class="form-row pt-2">
-                                            <div class="col-md-12 mb-2">
-                                              <label for="validationCustom01">Forward To:</label>
-                                              <input type="number" class="form-control" id="" name="faculty_id" required>
-                                              <div class="valid-feedback">
-                                                Looks good!
-                                              </div>
-                                            </div>
-                                            <div class="col-md-12 mb-2">
-                                              <label for="validationCustom01">Select a file:</label>
-                                              <input type="file" class="form-control" id="" name="image" value="" accept=".jpg,.jpeg,.png" required>
-                                              <div class="valid-feedback">
-                                                Looks good!
-                                              </div>
-                                            </div>
-                                          </div>
-                          </div>
-
-                          <!-- Modal Footer -->
-                          <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                              <button type="button" class="btn btn-primary" id="saveSignatureBtn">Forward to Signatory</button>
-                          </div>
-                          </div>
-                      </div>
-                    </div>
-
-                      <!-- Second Modal -->
-                      <div class="modal fade" id="secondModal">
-                      <div class="modal-dialog">
-                          <div class="modal-content">
-                          <!-- Modal Header -->
-                          <div class="modal-header">
-                              <h4 class="modal-title">Create Signature</h4>
-                              <button type="button" class="close" data-dismiss="modal">&times;</button>
-                          </div>
-
-                          <!-- Modal Body with Canvas -->
-                          <div class="modal-body">
-                              <canvas id="signatureCanvas" width="350" height="150" style="border: 1px ridge #000;"></canvas>
-                          </div>
-
-                          <!-- Modal Footer -->
-                          <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Reset</button>
-                              <button type="button" class="btn btn-primary" id="saveSignatureBtn">Save Signature</button>
-                          </div>
-                          </div>
-                      </div>
-                    </div>
-
-
                             <!-- Delete -->
-                            <div class="modal fade" id="del<?php echo $result['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                            <!-- <div class="modal fade" id="del<?php echo $result['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
                               aria-hidden="true">
                               <div class="modal-dialog">
                                 <div class="modal-content">
@@ -423,7 +258,7 @@ include "../dbcon.php";
                                   </form>
                                 </div>
                               </div>
-                            </div>
+                            </div> -->
                             <!-- /.modal -->
                     <?php } ?>
                   </tbody>

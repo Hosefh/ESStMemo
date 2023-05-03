@@ -54,7 +54,10 @@ include "../dbcon.php";
           <h1 class="mt-4 mb-3 text-left fw-bold">Memorandum</h1>
         </div>
         <div class="col">
-          <!-- <Button class="btn btn-success mt-4">Mark as Recieved</Button> -->
+          <Button class="btn btn-success mt-4">
+          <span><i class="bi bi-check me-2"></i></span>
+            Mark as Recieved
+        </Button>
         </div>
       </div>
       <div id="saveMemo">
