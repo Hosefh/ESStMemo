@@ -196,14 +196,16 @@ include "../dbcon.php";
                                     <img src="data:image/jpeg;base64,' . base64_encode($erow['image']) . '" id="memoImage" class="img-fluid" />';
                                 echo "</div>";
                                 ?>
-                                            <!-- <h6>Create Signature</h6>
-                                  <canvas id="signatureCanvas" width="300" height="150" style="border: 1px ridge #000;"></canvas> -->
-                                          
-                                  <div class="modal-footer">
-                                  <Button class="btn btn-success mt-4">
-                                    <span><i class="bi bi-check me-2"></i></span>
-                                      Mark as Recieve
-                                  </Button>
+                                          <!-- <h6>Create Signature</h6>
+                                <canvas id="signatureCanvas" width="300" height="150" style="border: 1px ridge #000;"></canvas> -->
+                                        
+                                <div class="modal-footer">
+                                <Button class="btn btn-success mt-4">
+                                  <span><i class="bi bi-check me-2"></i></span>
+                                    Mark as Recieve
+                                </Button>
+                              </form>
+                              
                           </div>
                             </div>
                           </div>

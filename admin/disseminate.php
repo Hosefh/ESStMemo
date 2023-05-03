@@ -254,22 +254,60 @@ include "../dbcon.php";
                               $update = $conn->query("UPDATE memos SET date_from = '".$_POST['date_from']."',date_to = '".$_POST['date_to']."', memo_type = '".$_POST['memo_type']."'  WHERE id = ".$_POST['disid']."");
                               if ($update)
                               { 
-                                $query = mysqli_query($conn, "SELECT COUNT(*) AS `count` FROM `disseminate` d WHERE d.`forwarded_to` = '".$_POST['signatory']."' AND d.`memo_id` = '".$_POST['disid']."';");
-                                $number = mysqli_fetch_array($query);
-                                if ($number['count'] == 0)
+                                if ($_POST['memo_type'] == "Very Important")
                                 {
-                                  $insert = $conn->query("INSERT INTO disseminate (memo_id,forwarded_to) VALUES ('".$_POST['disid']."','".$_POST['signatory']."')");
-                                  if ($insert)
+                                  $query = mysqli_query($conn, "SELECT COUNT(*) AS `count` FROM `memos` m 
+                                  INNER JOIN `disseminate` d ON m.`id` = d.memo_id
+                                  WHERE m.`memo_type` = 'Very Important' AND d.`forwarded_to` = ".$_POST['signatory']." AND 
+                                  (DATE ('".$_POST['date_from']."') BETWEEN DATE(m.`date_from`) AND DATE(m.`date_to`) OR DATE('".$_POST['date_to']."') BETWEEN DATE(m.`date_from`) AND DATE(m.`date_to`));");
+                                  $number = mysqli_fetch_array($query);
+                                  if ($number['count'] > 0)
                                   {
-                                    echo "<script>window.location.href='disseminate.php'</script>";
+                                    echo "<script>
+                                    alert('User Already has Very Important Memo!');
+                                    window.location.href='disseminate.php';
+                                    </script>";
+                                  }
+                                  else
+                                  {
+                                    $query = mysqli_query($conn, "SELECT COUNT(*) AS `count` FROM `disseminate` d WHERE d.`forwarded_to` = '".$_POST['signatory']."' AND d.`memo_id` = '".$_POST['disid']."';");
+                                    $number = mysqli_fetch_array($query);
+                                    if ($number['count'] == 0)
+                                    {
+                                      $insert = $conn->query("INSERT INTO disseminate (memo_id,forwarded_to) VALUES ('".$_POST['disid']."','".$_POST['signatory']."')");
+                                      if ($insert)
+                                      {
+                                        echo "<script>window.location.href='disseminate.php'</script>";
+                                      }
+                                    }
+                                    else
+                                    {
+                                    echo "<script>
+                                    alert('Memo already disseminated to User!');
+                                    window.location.href='disseminate.php';
+                                    </script>";
+                                    }
                                   }
                                 }
                                 else
                                 {
-                                echo "<script>
-                                alert('Memo already disseminated to User!');
-                                window.location.href='disseminate.php';
-                                </script>";
+                                  $query = mysqli_query($conn, "SELECT COUNT(*) AS `count` FROM `disseminate` d WHERE d.`forwarded_to` = '".$_POST['signatory']."' AND d.`memo_id` = '".$_POST['disid']."';");
+                                    $number = mysqli_fetch_array($query);
+                                    if ($number['count'] == 0)
+                                    {
+                                      $insert = $conn->query("INSERT INTO disseminate (memo_id,forwarded_to) VALUES ('".$_POST['disid']."','".$_POST['signatory']."')");
+                                      if ($insert)
+                                      {
+                                        echo "<script>window.location.href='disseminate.php'</script>";
+                                      }
+                                    }
+                                    else
+                                    {
+                                    echo "<script>
+                                    alert('Memo already disseminated to User!');
+                                    window.location.href='disseminate.php';
+                                    </script>";
+                                    }
                                 }
                                }
                                else
