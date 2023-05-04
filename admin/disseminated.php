@@ -47,8 +47,8 @@ include "../dbcon.php";
                     <tr>
                       <th>Memorandum Title</th>
                       <th>Memo Type</th>
-                      <th>User ID</th>
-                      <th>Date Dissiminated</th>
+                      <th>Forwarded to</th>
+                      <th>Date Disseminated</th>
                       <th>isRecieved?</th>
                     </tr>
                   </thead>
@@ -58,59 +58,62 @@ include "../dbcon.php";
                     // INNER JOIN `memos` m ON m.`id` = fm.`memo_id`
                     // INNER JOIN `forwarding_tracking` ft ON ft.`memo_id` = m.`id`
                     // WHERE m.`user_id` = '" . $_SESSION['userid'] . "' AND m.`ready_for_forwarding` = 1 AND ft.`is_signed` = 1 AND ft.`is_forwarded` = 0;";
-                    $sql = "SELECT m.`id`, ft.`timestamp`,m.memo_title, m.`memo_type`, m.`user_id` FROM `memos` m
-                    INNER JOIN `forwarding_tracking` ft ON ft.`memo_id` = m.`id` 
-                    WHERE m.`ready_for_forwarding` = 1 AND m.`user_id` ='" . $_SESSION['userid'] . "' AND ft.`is_forwarded` = 0 AND ft.`is_signed` = 1;";
+                    // $sql = "SELECT m.`id`, DATE(ft.`timestamp`) as `timestamp`,m.memo_title, m.`memo_type`, m.`user_id` FROM `memos` m
+                    // INNER JOIN `forwarding_tracking` ft ON ft.`memo_id` = m.`id` 
+                    // WHERE m.`ready_for_forwarding` = 1 AND m.`user_id` ='" . $_SESSION['userid'] . "' AND ft.`is_forwarded` = 0 AND ft.`is_signed` = 1;";
+                    $sql = "SELECT m.`memo_title`, m.`memo_type`, DATE(d.`transdate`) as `timestamp`, d.`forwarded_to`,d.`received` FROM `disseminate` d 
+                    INNER JOIN `memos` m ON m.`id` = d.`memo_id`;";
                     $actresult = mysqli_query($conn, $sql);
 
                     while ($result = mysqli_fetch_assoc($actresult)) {
                         ?>
-                                            <tr>
-                                              <td>
-                                                <?php echo $result['memo_title']; ?>
-                                              </td>
-                                              <!-- <td> -->
-                                                <!-- <span class="badge bg-warning">Important</span> -->
-                                                <?php
-                                                // if ($result['ready_for_forwarding'] == 1)
-                                                // {
-                                                //   echo "Ready for Dissiminsation"
-                                                // }
-                                                // $type = $result['memo_type'];
-                                                // if ($type == 'Very Important') {
-                                                //     echo '<span class="badge bg-danger">Very Important</span>';
-                                                // } else if ($type == 'Important') {
-                                                //     echo '<span class="badge bg-warning">Important</span>';
-                                                // } else {
-                                                //     echo '<span class="badge bg-success">Less Important</span>';
-                                                // }
-                                                ?>
-                                              <!-- </td> -->
-                                              <td>
-                                              <?php
-                                              $type = $result['memo_type'];
-                                              if ($type == 'Very Important') {
-                                                  echo '<span class="badge bg-danger">Very Important</span>';
-                                              } else if ($type == 'Important') {
-                                                  echo '<span class="badge bg-warning">Important</span>';
-                                              } else {
-                                                  echo '<span class="badge bg-success">Less Important</span>';
-                                              }
-                                              ?>
-                                              </td>
-                                              <td>
-                                              <?php echo $result['user_id']; ?>
-                                              </td>
-                                              <td>
-                                              <?php echo $result['timestamp']; ?> 
-                                              </td>
-                                              <td>
-                                                YES
-                                              </td>
-                                            </tr>
-
-                                   
-
+                        <tr>
+                          <td>
+                            <?php echo $result['memo_title']; ?>
+                          </td>
+                          <!-- <td> -->
+                            <!-- <span class="badge bg-warning">Important</span> -->
+                            <?php
+                            // if ($result['ready_for_forwarding'] == 1)
+                            // {
+                            //   echo "Ready for Dissiminsation"
+                            // }
+                            // $type = $result['memo_type'];
+                            // if ($type == 'Very Important') {
+                            //     echo '<span class="badge bg-danger">Very Important</span>';
+                            // } else if ($type == 'Important') {
+                            //     echo '<span class="badge bg-warning">Important</span>';
+                            // } else {
+                            //     echo '<span class="badge bg-success">Less Important</span>';
+                            // }
+                            ?>
+                          <!-- </td> -->
+                          <td>
+                          <?php
+                          $type = $result['memo_type'];
+                          if ($type == 'Very Important') {
+                              echo '<span class="badge bg-danger">Very Important</span>';
+                          } else if ($type == 'Important') {
+                              echo '<span class="badge bg-warning">Important</span>';
+                          } else {
+                              echo '<span class="badge bg-success">Less Important</span>';
+                          }
+                          ?>
+                          </td>
+                          <td>
+                          <?php echo $result['forwarded_to']; ?>
+                          </td>
+                          <td>
+                          <?php echo $result['timestamp']; ?> 
+                          </td>
+                          <td>
+                            <?php 
+                            if ($result['received'])
+                            { echo "RECEIVED!";}
+                            else { echo "Not Received!";}
+                            ?>
+                          </td>
+                        </tr>
                                 <!-- start of info modal -->
                                 <div id="info<?php echo $result['id']; ?>" class="modal fade" data-bs-backdrop="static" tabindex="-1">
                                   <div class="modal-dialog">
@@ -128,10 +131,7 @@ include "../dbcon.php";
                                     </div>
                                   </div>
                                 </div>
-
                                 <!-- end of info modal -->
-
-                  
                     <?php } ?>
                   </tbody>
                   <tfoot></tfoot>
